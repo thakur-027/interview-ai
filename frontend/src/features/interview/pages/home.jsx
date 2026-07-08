@@ -1,7 +1,54 @@
-import React from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import '../style/home.scss'
+import {useInterview} from '../hooks/useInterview.js'
+import {useNavigate} from 'react-router'
 
 const Home = () => {
+    const {generateReport, reports, getAllReports} = useInterview()
+    const navigate = useNavigate()
+    const [jobDescription, setJobDescription] = useState('')
+    const [selfDescription, setSelfDescription] = useState('')
+    const [resumeFileName, setResumeFileName] = useState('No file selected')
+    const [resumeFileFormat, setResumeFileFormat] = useState('')
+    const [isGeneratingReport, setIsGeneratingReport] = useState(false)
+    const resumeInputRef = useRef(null)
+
+    useEffect(() => {
+        getAllReports()
+    }, [])
+
+    const handleResumeChange = (event) => {
+        const file = event.target.files?.[0]
+
+        if (!file) {
+            setResumeFileName('No file selected')
+            setResumeFileFormat('')
+            return
+        }
+
+        const fileNameParts = file.name.split('.')
+        const fileFormat = fileNameParts.length > 1 ? fileNameParts.pop().toUpperCase() : 'FILE'
+
+        setResumeFileName(file.name)
+        setResumeFileFormat(fileFormat)
+    }
+
+    const handleGenerateReport = async () => {
+        const resumeFile = resumeInputRef.current.files?.[0]
+        if (!resumeFile) {
+            return
+        }
+
+        setIsGeneratingReport(true)
+        try {
+            const data = await generateReport({resumeFile, selfDescription, jobDescription})
+            navigate(`/interview/${data._id}`)
+        } finally {
+            setIsGeneratingReport(false)
+        }
+    }
+
+
     return (
         <main className="home">
             <div className="home__ambient home__ambient--one" aria-hidden="true" />
@@ -48,6 +95,7 @@ const Home = () => {
                         </div>
 
                         <textarea
+                            onChange={(e) => {setJobDescription(e.target.value)}}
                             name="jobDescription"
                             id="jobDescription"
                             placeholder="Paste the target job description here. Include key requirements and core responsibilities for a comprehensive report."
@@ -85,8 +133,12 @@ const Home = () => {
                                 <strong>Upload candidate profile</strong>
                                 <small>PDF, DOCX up to 10MB</small>
                                 <span className="dropzone__button">Select file</span>
+                                <div className="dropzone__file-meta" aria-live="polite">
+                                    <strong>{resumeFileName}</strong>
+                                    {resumeFileFormat && <span>{resumeFileFormat}</span>}
+                                </div>
                             </label>
-                            <input hidden type="file" id="resume" accept=".pdf,.doc,.docx" />
+                                <input ref={resumeInputRef} onChange={handleResumeChange} hidden type="file" id="resume" accept=".pdf,.doc,.docx" />
                         </article>
 
                         <article className="panel panel--self-description">
@@ -102,6 +154,7 @@ const Home = () => {
                             </div>
 
                             <textarea
+                                onChange={(e) => {setSelfDescription(e.target.value)}}
                                 name="selfDescription"
                                 id="selfDescription"
                                 placeholder="Describe unique career highlights, specific goals, or nuances you want emphasized in this specific interview..."
@@ -109,8 +162,13 @@ const Home = () => {
                             <p className="panel__tiny-tag">Optional context</p>
                         </article>
 
-                        <button className="button primary-button home__action" type="button">
-                            <span>Generate Interview Report</span>
+                        <button
+                        onClick = {handleGenerateReport}
+                        className="button primary-button home__action"
+                        type="button"
+                        disabled={isGeneratingReport}
+                        >
+                            <span>{isGeneratingReport ? 'Generating report…' : 'Generate Interview Report'}</span>
                             <span className="home__action-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                     <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -119,6 +177,35 @@ const Home = () => {
                             </span>
                         </button>
                     </div>
+                </section>
+
+                {/* Recent reports list */}
+                <section className="recent-reports">
+                    <h2>My Recent Interview Plans</h2>
+                    {reports?.length > 0 ? (
+                        <ul className="reports-list">
+                            {reports.map((report) => (
+                                <li key={report._id} className="report-card">
+                                    <a
+                                        className="report-card__link"
+                                        href={`/interview/${report._id}`}
+                                        onClick={(event) => {
+                                            event.preventDefault()
+                                            navigate(`/interview/${report._id}`)
+                                        }}
+                                    >
+                                        <div className="report-card__header">
+                                            <h3>{report.title}</h3>
+                                            <span className="report-card__score">{report.matchScore}%</span>
+                                        </div>
+                                        <p className="report-card__meta">Created on {new Date(report.createdAt).toLocaleDateString()}</p>
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="recent-reports__empty">No saved reports yet. Generate one to see it here.</p>
+                    )}
                 </section>
 
                 <footer className="home__statusbar" aria-label="System status">
@@ -141,6 +228,15 @@ const Home = () => {
                     </div>
                 </footer>
             </section>
+
+            {isGeneratingReport && (
+                <div className="home__overlay" aria-live="polite" aria-busy="true">
+                    <div className="home__overlay-card">
+                        <div className="home__overlay-spinner" aria-hidden="true" />
+                        <p>Generating your interview report...</p>
+                    </div>
+                </div>
+            )}
         </main>
     )
 }

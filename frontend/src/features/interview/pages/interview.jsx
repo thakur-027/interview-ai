@@ -1,103 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import '../style/interview.scss'
+import { useInterview } from '../hooks/useInterview.js'
+import {useNavigate, useParams} from 'react-router'
 
-const reportData = {
-  matchScore: 92,
-  technicalQuestions: [
-    {
-      question: 'How did you ensure atomicity in your Bank Transaction System using MongoDB sessions, and why was it necessary to use a double-entry ledger architecture?',
-      intention: 'To evaluate the candidate\'s understanding of database consistency, transactional integrity, and financial system design patterns.',
-      answer: 'Explain that atomicity ensures that either all operations in a transaction (debit from sender, credit to receiver, and status update) succeed, or none do, preventing data corruption.',
-    },
-    {
-      question: 'In your Blog App, you used Coroutines for asynchronous data fetching. Explain how Coroutines handle thread management compared to traditional callbacks.',
-      intention: 'To assess proficiency in modern Android concurrency patterns and memory management.',
-      answer: 'Discuss how Coroutines use suspend functions to pause execution without blocking the main thread, leading to cleaner code and safer lifecycle-aware cancellation.',
-    },
-    {
-      question: 'Your MealMind project uses LightGBM for ranking. How did you integrate the model and still keep latency under 300ms?',
-      intention: 'To understand the candidate\'s ability to optimize performance when integrating AI/ML models into software products.',
-      answer: 'Focus on two-stage retrieval: quickly narrow candidates first, then run expensive ranking on a small subset with pre-computed features.',
-    },
-  ],
-  behavioralQuestions: [
-    {
-      question: 'During your internship, you found a critical security vulnerability. How did you communicate this and ensure it was fixed?',
-      intention: 'To assess communication skills, proactive problem-solving, and attention to detail.',
-      answer: 'Use STAR: define the risk clearly, document reproducible steps, align with stakeholders, and follow through to verify resolution.',
-    },
-    {
-      question: 'Tell me about a time you had to learn a new technology quickly to meet a project deadline. How did you approach it?',
-      intention: 'To evaluate adaptability and self-learning capabilities.',
-      answer: 'Describe a focused learning loop: docs, small prototype, then progressive integration with frequent validation.',
-    },
-  ],
-  skillGaps: [
-    {
-      skill: 'Version Control (Git) Workflows',
-      severity: 'low',
-    },
-    {
-      skill: 'Unit Testing & UI Testing (JUnit, Espresso)',
-      severity: 'medium',
-    },
-    {
-      skill: 'Java (Primary focus is Kotlin)',
-      severity: 'low',
-    },
-    {
-      skill: 'CI/CD Pipelines',
-      severity: 'medium',
-    },
-  ],
-  preparationPlan: [
-    {
-      day: 1,
-      focus: 'Data Structures and Algorithms (DSA) in C++',
-      tasks: [
-        'Review common data structures and complexity trade-offs.',
-        'Practice medium coding problems on hash maps and strings.',
-        'Refresh core OOP concepts with short examples.',
-      ],
-    },
-    {
-      day: 2,
-      focus: 'Android Development Deep Dive',
-      tasks: [
-        'Review Jetpack Compose state management patterns.',
-        'Study lifecycle components and ViewModel coordination.',
-        'Refresh Java syntax for legacy compatibility.',
-      ],
-    },
-    {
-      day: 3,
-      focus: 'Backend Architecture & Security',
-      tasks: [
-        'Design mock REST endpoints and data contracts.',
-        'Review aggregation pipelines and indexing strategy.',
-        'Revisit OAuth2 and JWT best practices.',
-      ],
-    },
-    {
-      day: 4,
-      focus: 'System Design and Version Control',
-      tasks: [
-        'Learn practical Git branching strategies.',
-        'Study caching, scaling, and sharding fundamentals.',
-        'Draw architecture diagrams for key projects.',
-      ],
-    },
-    {
-      day: 5,
-      focus: 'Mock Interviews & Behavioral Prep',
-      tasks: [
-        'Practice STAR responses for project narratives.',
-        'Prepare interviewer-focused reverse questions.',
-        'Run a mock session and review clarity of explanations.',
-      ],
-    },
-  ],
-}
 
 const sectionNav = [
   { id: 'technical', label: 'Technical questions' },
@@ -139,13 +44,37 @@ const NavIcon = ({ section }) => {
 const Interview = () => {
   const [activeSection, setActiveSection] = useState('roadmap')
   const [openQuestions, setOpenQuestions] = useState({})
+  const [isDownloadingResume, setIsDownloadingResume] = useState(false)
+  const { report, getReportById, generateResume } = useInterview()
+  const {interviewId} = useParams()
 
+  useEffect(() => {
+    if(interviewId){
+      getReportById(interviewId)
+    }
+  },[interviewId])
+  
   const toggleQuestion = (sectionId, questionIndex) => {
     const key = `${sectionId}-${questionIndex}`
     setOpenQuestions((prev) => ({
       ...prev,
       [key]: !prev[key],
     }))
+  }
+
+  const handleGenerateResume = async () => {
+    if (!interviewId) {
+      return
+    }
+
+    setIsDownloadingResume(true)
+    try {
+      await generateResume(interviewId)
+    } catch (error) {
+      console.error('Downloading resume failed:', error)
+    } finally {
+      setIsDownloadingResume(false)
+    }
   }
 
   return (
@@ -157,7 +86,7 @@ const Interview = () => {
         <aside className="interview-layout__left" aria-label="Section navigation">
           <header className="panel-head">
             <h1>Interview Report</h1>
-            <p>Match Score {reportData.matchScore}%</p>
+            <p>Match Score {report?.matchScore ?? 0}%</p>
           </header>
 
           <nav className="left-nav">
@@ -175,6 +104,23 @@ const Interview = () => {
               </button>
             ))}
           </nav>
+
+          <button
+            type="button"
+            className="left-nav__action"
+            onClick={handleGenerateResume}
+            disabled={!interviewId}
+          >
+            <span className="left-nav__action-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 10C6 7.23858 8.23858 5 11 5H13C15.7614 5 18 7.23858 18 10V14C18 16.7614 15.7614 19 13 19H11C8.23858 19 6 16.7614 6 14V10Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M9.5 8.5H14.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                <path d="M9.5 12.5H14.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                <path d="M9.5 16.5H12.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            </span>
+            <span>Download Resume</span>
+          </button>
         </aside>
 
         <section className="interview-layout__main" aria-label="Interview content">
@@ -182,11 +128,11 @@ const Interview = () => {
             <article className="content-group" id="technical-questions">
             <div className="content-group__head">
               <h2>Technical Questions</h2>
-              <span>{reportData.technicalQuestions.length} Items</span>
+              <span>{report?.technicalQuestions?.length ?? 0} Items</span>
             </div>
 
             <div className="question-list">
-              {reportData.technicalQuestions.map((item, index) => (
+              {(report?.technicalQuestions ?? []).map((item, index) => (
                 <article key={item.question} className="question-card">
                   <div className="question-card__head">
                     <div>
@@ -221,11 +167,11 @@ const Interview = () => {
             <article className="content-group" id="behavioral-questions">
             <div className="content-group__head">
               <h2>Behavioral Questions</h2>
-              <span>{reportData.behavioralQuestions.length} Items</span>
+              <span>{report?.behavioralQuestions?.length ?? 0} Items</span>
             </div>
 
             <div className="question-list">
-              {reportData.behavioralQuestions.map((item, index) => (
+              {(report?.behavioralQuestions ?? []).map((item, index) => (
                 <article key={item.question} className="question-card question-card--behavioral">
                   <div className="question-card__head">
                     <div>
@@ -260,11 +206,11 @@ const Interview = () => {
             <article className="content-group" id="road-map">
             <div className="content-group__head">
               <h2>5-Day Preparation Roadmap</h2>
-              <span>{reportData.preparationPlan.length}-day plan</span>
+              <span>{report?.preparationPlan?.length ?? 0}-day plan</span>
             </div>
 
             <div className="roadmap-timeline">
-              {reportData.preparationPlan.map((plan) => (
+              {(report?.preparationPlan ?? []).map((plan) => (
                 <article key={plan.day} className="timeline-item">
                   <span className="timeline-item__dot" aria-hidden="true" />
                   <div className="timeline-item__content">
@@ -290,20 +236,20 @@ const Interview = () => {
             <h2>Match Score</h2>
             <div
               className="score-ring"
-              style={{ '--score': reportData.matchScore }}
+              style={{ '--score': report?.matchScore ?? 0 }}
             >
               <div className="score-ring__value">
-                <strong>{reportData.matchScore}</strong>
+                <strong>{report?.matchScore ?? 0}</strong>
                 <span>%</span>
               </div>
             </div>
-            <p>{getMatchTone(reportData.matchScore)}</p>
+            <p>{getMatchTone(report?.matchScore ?? 0)}</p>
           </article>
 
           <article className="skill-gaps">
             <h2>Skill Gaps</h2>
             <div className="skill-gaps__list">
-              {reportData.skillGaps.map((item) => (
+              {(report?.skillGaps ?? []).map((item) => (
                 <span key={item.skill} className={`gap gap--${item.severity}`}>
                   {item.skill}
                 </span>
@@ -311,8 +257,17 @@ const Interview = () => {
             </div>
           </article>
         </aside>
-      </section>
-    </main>
+        </section>
+
+        {isDownloadingResume && (
+          <div className="resume-overlay" aria-live="polite" aria-busy="true">
+            <div className="resume-overlay__content">
+              <div className="resume-overlay__spinner" aria-hidden="true" />
+              <p>Downloading resume...</p>
+            </div>
+          </div>
+        )}
+      </main>
   )
 }
 

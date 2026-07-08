@@ -4,6 +4,9 @@ import {login, logout, register, getMe} from "../services/auth.api";
 
 export const useAuth = () => {
     const context = useContext(AuthContext)
+    if (!context) {
+        throw new Error("useAuth must be used within an AuthProvider")
+    }
     const {user, setUser, loading, setLoading} = context
 
     const handleLogin = async ({email, password}) => {
@@ -45,13 +48,13 @@ export const useAuth = () => {
         useEffect(() => {
         const getAndSetUser = async () => {
             try{
-            const data = await getMe()
-            setUser(data.user)
+                const data = await getMe()
+                setUser(data?.user ?? null)
             }catch(error){
                 console.error("Fetching user failed:", error)
                 setUser(null)
             }finally{
-            setLoading(false)
+                setLoading(false)
             }
         }
         getAndSetUser()
