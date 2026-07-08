@@ -19,7 +19,7 @@ This repository contains two main parts:
 
 ## Repository structure
 
-```
+```text
 .
 ├── backend/
 │   ├── src/
@@ -47,31 +47,31 @@ This repository contains two main parts:
 
 1. Copy the example environment file:
 
-```bash
-cd backend
-cp .env.example .env
-```
+    ```bash
+    cd backend
+    cp .env.example .env
+    ```
 
-2. Open `backend/.env` and configure your values:
+1. Open `backend/.env` and configure your values:
 
-```env
-MONGO_URI=your-mongodb-connection-string
-JWT_SECRET=your-jwt-secret
-GOOGLE_GENAI_API_KEY=your-gemini-api-key
-GEMINI_MODEL=gemini-2.0-flash
-```
+    ```env
+    MONGO_URI=your-mongodb-connection-string
+    JWT_SECRET=your-jwt-secret
+    GOOGLE_GENAI_API_KEY=your-gemini-api-key
+    GEMINI_MODEL=gemini-2.0-flash
+    ```
 
-3. Install dependencies:
+1. Install dependencies:
 
-```bash
-npm install
-```
+    ```bash
+    npm install
+    ```
 
-4. Start the backend server:
+1. Start the backend server:
 
-```bash
-npm run dev
-```
+    ```bash
+    npm run dev
+    ```
 
 The backend runs on `http://localhost:3000` by default.
 
@@ -79,16 +79,16 @@ The backend runs on `http://localhost:3000` by default.
 
 1. Install dependencies:
 
-```bash
-cd ../frontend
-npm install
-```
+    ```bash
+    cd ../frontend
+    npm install
+    ```
 
-2. Start the frontend development server:
+1. Start the frontend development server:
 
-```bash
-npm run dev
-```
+    ```bash
+    npm run dev
+    ```
 
 The frontend runs on `http://localhost:5173` by default.
 
@@ -120,13 +120,13 @@ Because this app is split into frontend and backend services, deploy them separa
 Use any Node.js host such as Render, Railway, Heroku, or Azure App Service.
 
 1. Push the backend code to a GitHub repo.
-2. Create a new Node.js service in your host.
-3. Set environment variables:
-   - `MONGO_URI`
-   - `JWT_SECRET`
-   - `GOOGLE_GENAI_API_KEY`
-   - `GEMINI_MODEL`
-4. Use `npm install` and `npm run dev` or a production start command.
+1. Create a new Node.js service in your host.
+1. Set environment variables:
+    - `MONGO_URI`
+    - `JWT_SECRET`
+    - `GOOGLE_GENAI_API_KEY`
+    - `GEMINI_MODEL`
+1. Use `npm install` and `npm run dev` or a production start command.
 
 > If your host requires a `start` script, add one in `backend/package.json`:
 >
@@ -142,8 +142,8 @@ Use any Node.js host such as Render, Railway, Heroku, or Azure App Service.
 Use Vercel, Netlify, or any static host.
 
 1. Build the frontend: `npm run build`
-2. Deploy the `dist/` output folder.
-3. Make sure the frontend uses the backend API URL.
+1. Deploy the `dist/` output folder.
+1. Make sure the frontend uses the backend API URL.
 
 If you want a single domain in production, update the frontend API base URL to the deployed backend host or use an environment variable.
 
@@ -177,7 +177,3 @@ npm run dev
 - If the AI quota is exhausted, the backend will fall back to a local PDF resume generator.
 - Check your Gemini API key and project quota.
 - Make sure `MONGO_URI` is valid and reachable.
-
-## License
-
-MIT
