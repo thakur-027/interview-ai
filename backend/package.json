@@ -3,16 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
- "scripts": {
-  "start": "node server.js",
-  "dev": "npx nodemon server.js"
-} ,
+  "scripts": {
+    "start": "node server.js",
+    "dev": "npx nodemon server.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
     "@google/genai": "^2.10.0",
+    "@sparticuz/chromium": "^149.0.0",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
@@ -23,6 +24,7 @@
     "multer": "^2.2.0",
     "pdf-parse": "^2.4.5",
     "puppeteer": "^25.3.0",
+    "puppeteer-core": "^25.3.0",
     "zod": "^4.4.3",
     "zod-to-json-schema": "^3.25.2"
   }

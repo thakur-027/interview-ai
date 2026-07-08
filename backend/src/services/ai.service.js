@@ -1,5 +1,8 @@
 const { GoogleGenAI, Type } = require("@google/genai");
-const puppeteer = require("puppeteer");
+
+const isProd = process.env.NODE_ENV === "production";
+const puppeteer = isProd ? require("puppeteer-core") : require("puppeteer");
+const chromium = isProd ? require("@sparticuz/chromium") : null;
 
 const ai = new GoogleGenAI({
     apiKey: process.env.GOOGLE_GENAI_API_KEY,
@@ -465,14 +468,17 @@ async function generatePdfFromHtml(htmlContent) {
     try {
         browser = await puppeteer.launch({
             headless: true,
-            args: [
-                "--no-sandbox",
-                "--disable-setuid-sandbox",
-                "--disable-dev-shm-usage",
-                "--disable-gpu",
-                "--font-render-hinting=none",
-                "--enable-font-antialiasing",
-            ],
+            args: isProd
+                ? chromium.args
+                : [
+                    "--no-sandbox",
+                    "--disable-setuid-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-gpu",
+                    "--font-render-hinting=none",
+                    "--enable-font-antialiasing",
+                  ],
+            executablePath: isProd ? await chromium.executablePath() : undefined,
         })
 
         const page = await browser.newPage()
