@@ -220,135 +220,222 @@ function buildInterviewReportFallback({ resume = "", selfDescription = "", jobDe
 }
 
 function buildResumeHtmlFallback({ resume, selfDescription, jobDescription }) {
-    const skills = toBulletItems(jobDescription || selfDescription || resume, 8);
-    const experience = toBulletItems(resume, 10);
-    const summaryText = selfDescription || 'Experienced professional with strong technical and problem-solving skills.';
-    const roleText = jobDescription || 'Professional Resume';
+    // Parse resume content for sections
+    const resumeLines = (resume || '').split(/\r?\n/).filter(line => line.trim());
+    
+    // Extract basic info (very naive extraction)
+    const nameMatch = resumeLines[0] || 'Candidate Name';
+    const emailMatch = resume.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/) || ['candidate@email.com'];
+    const phoneMatch = resume.match(/[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}/) || ['+1-xxx-xxx-xxxx'];
+    
+    // Extract skills from resume or job description
+    const skillKeywords = ['JavaScript', 'Python', 'React', 'Node.js', 'MongoDB', 'AWS', 'Docker', 'Kubernetes', 'Git', 'TypeScript', 'SQL'];
+    const foundSkills = skillKeywords.filter(skill => {
+        const text = `${resume} ${jobDescription} ${selfDescription}`.toLowerCase();
+        return text.includes(skill.toLowerCase());
+    });
+    const languages = foundSkills.slice(0, 5).join(', ') || 'Programming Languages';
+    const frameworks = 'Web Frameworks, Cloud Services';
+    
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 11px;
+            line-height: 1.4;
+            color: #000;
+            background: #fff;
+            padding: 28px 32px;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 18px;
+            padding-bottom: 8px;
+            border-bottom: 1.5px solid #000;
+        }
+        .header-left {
+            flex: 1;
+        }
+        .header-right {
+            text-align: right;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+        .name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        .degree {
+            font-size: 11px;
+            margin-bottom: 1px;
+        }
+        .institution {
+            font-size: 11px;
+            font-style: italic;
+        }
+        .contact-line {
+            margin-bottom: 2px;
+        }
+        .section {
+            margin-bottom: 14px;
+        }
+        .section-title {
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-variant: small-caps;
+            letter-spacing: 0.5px;
+            border-bottom: 1.5px solid #000;
+            padding-bottom: 2px;
+            margin-bottom: 8px;
+        }
+        .subsection {
+            margin-bottom: 10px;
+        }
+        .subsection-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 2px;
+        }
+        .subsection-title {
+            font-weight: bold;
+        }
+        .subsection-org {
+            font-style: italic;
+        }
+        .subsection-date {
+            font-style: italic;
+            font-size: 10px;
+        }
+        .project-desc {
+            font-style: italic;
+            font-size: 11px;
+            margin-bottom: 3px;
+        }
+        ul {
+            margin: 0;
+            padding-left: 18px;
+            list-style: none;
+        }
+        li {
+            margin-bottom: 3px;
+            position: relative;
+        }
+        li::before {
+            content: '–';
+            position: absolute;
+            left: -12px;
+        }
+        .skills-line {
+            margin-bottom: 6px;
+        }
+        .skills-line strong {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <div class="name">${escapeHtml(nameMatch)}</div>
+            <div class="degree">Bachelor of Technology in Computer Science</div>
+            <div class="institution">University Name</div>
+        </div>
+        <div class="header-right">
+            <div class="contact-line">${escapeHtml(phoneMatch[0])}</div>
+            <div class="contact-line">${escapeHtml(emailMatch[0])}</div>
+            <div class="contact-line">GitHub Profile</div>
+            <div class="contact-line">LinkedIn Profile</div>
+        </div>
+    </div>
 
-    return `
-        <html>
-            <head>
-                <meta charset="utf-8" />
-                <style>
-                    * { box-sizing: border-box; }
-                    body {
-                        margin: 0;
-                        padding: 0;
-                        font-family: Arial, Helvetica, sans-serif;
-                        color: #1f2937;
-                        background: #f5f7fa;
-                    }
-                    .page {
-                        width: 100%;
-                        max-width: 850px;
-                        margin: 0 auto;
-                        background: #ffffff;
-                        color: #1f2937;
-                        padding: 24px 28px;
-                    }
-                    .header {
-                        border-bottom: 2px solid #1f4e79;
-                        padding-bottom: 10px;
-                        margin-bottom: 14px;
-                    }
-                    h1 {
-                        margin: 0 0 6px;
-                        font-size: 24px;
-                        color: #0f172a;
-                    }
-                    .subtitle {
-                        margin: 0;
-                        font-size: 11px;
-                        color: #4b5563;
-                        line-height: 1.5;
-                    }
-                    .section {
-                        margin-bottom: 12px;
-                        padding-top: 8px;
-                    }
-                    .section h2 {
-                        margin: 0 0 6px;
-                        font-size: 13px;
-                        font-weight: bold;
-                        text-transform: uppercase;
-                        letter-spacing: 0.04em;
-                        color: #1f4e79;
-                        border-bottom: 1px solid #dbe4ee;
-                        padding-bottom: 4px;
-                    }
-                    .content {
-                        font-size: 11px;
-                        line-height: 1.45;
-                        color: #374151;
-                    }
-                    ul {
-                        margin: 4px 0 0 0;
-                        padding-left: 16px;
-                    }
-                    li {
-                        margin-bottom: 3px;
-                    }
-                    .two-col {
-                        display: grid;
-                        grid-template-columns: 1.15fr 0.85fr;
-                        gap: 14px;
-                        align-items: start;
-                    }
-                    .muted { color: #4b5563; }
-                    .tag {
-                        display: inline-block;
-                        background: #eef4fb;
-                        color: #1f4e79;
-                        padding: 3px 7px;
-                        border-radius: 999px;
-                        margin: 2px 6px 2px 0;
-                        font-size: 10px;
-                    }
-                    .compact {
-                        margin: 0;
-                        white-space: pre-wrap;
-                        word-wrap: break-word;
-                        font-family: inherit;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="page">
-                    <div class="header">
-                        <h1>Candidate Resume</h1>
-                        <p class="subtitle">${escapeHtml(roleText)}</p>
-                    </div>
-
-                    <div class="section">
-                        <h2>Professional Summary</h2>
-                        <div class="content">${escapeHtml(summaryText)}</div>
-                    </div>
-
-                    <div class="two-col">
-                        <div class="section">
-                            <h2>Core Skills</h2>
-                            <div class="content">
-                                ${skills.map((item) => `<span class="tag">${escapeHtml(item)}</span>`).join('')}
-                            </div>
-                        </div>
-                        <div class="section">
-                            <h2>Experience Highlights</h2>
-                            <div class="content">
-                                <ul>
-                                    ${experience.map((item) => `<li>${escapeHtml(item)}</li>`).join('') || '<li class="muted">No experience details extracted</li>'}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <h2>Resume Details</h2>
-                        <div class="content compact">${escapeHtml(resume)}</div>
-                    </div>
+    <div class="section">
+        <div class="section-title">Education</div>
+        <div class="subsection">
+            <div class="subsection-header">
+                <div>
+                    <span class="subsection-title">Bachelor of Technology in Computer Science</span>
                 </div>
-            </body>
-        </html>
-    `;
+                <div class="subsection-date">2020-24</div>
+            </div>
+            <div class="subsection-org">University Name</div>
+            <div>CGPA: --</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Personal Projects</div>
+        <div class="subsection">
+            <div class="subsection-title">• Project Title</div>
+            <div class="project-desc">A brief description of the project demonstrating technical skills.</div>
+            <ul>
+                <li>Implemented key feature resulting in measurable impact</li>
+                <li>Used modern architecture and best practices</li>
+                <li>Technology Used: ${escapeHtml(languages)}</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Experience</div>
+        <div class="subsection">
+            <div class="subsection-header">
+                <div>
+                    <span class="subsection-title">• Internship or Role Title</span>
+                </div>
+                <div class="subsection-date">Month Year - Month Year</div>
+            </div>
+            <div class="subsection-org">Company Name</div>
+            <ul>
+                <li>Achieved measurable outcome through specific technical contribution</li>
+                <li>Collaborated with team on architecture and implementation</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Technical Skills and Interests</div>
+        <div class="skills-line"><strong>Languages:</strong> ${escapeHtml(languages)}</div>
+        <div class="skills-line"><strong>Frameworks:</strong> ${escapeHtml(frameworks)}</div>
+        <div class="skills-line"><strong>Tools:</strong> Git, Docker, VS Code</div>
+        <div class="skills-line"><strong>Databases:</strong> MongoDB, PostgreSQL</div>
+        <div class="skills-line"><strong>Areas of Interest:</strong> Web Development, Cloud Computing</div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Positions of Responsibility</div>
+        <div class="subsection">
+            <div class="subsection-header">
+                <div>
+                    <span class="subsection-title">• Volunteer Role</span>
+                    <span> Event Name - Organization</span>
+                </div>
+                <div class="subsection-date">Month Year</div>
+            </div>
+            <ul>
+                <li>Contributed to organizing and executing event activities</li>
+                <li>Engaged with attendees and facilitated smooth operations</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>`;
 }
 
 // Built natively for Gemini — no zod-to-json-schema involved.
@@ -495,7 +582,7 @@ async function generatePdfFromHtml(htmlContent) {
         const pdfBuffer = await page.pdf({
             format: 'A4',
             printBackground: true,
-            margin: { top: '20mm', bottom: '20mm', left: '18mm', right: '18mm' },
+            margin: { top: '15mm', bottom: '15mm', left: '12mm', right: '12mm' },
         })
 
         return pdfBuffer
@@ -513,28 +600,75 @@ async function generateResumePdf({resume, selfDescription, jobDescription}) {
         properties: {
             html: {
                 type: Type.STRING,
-                description: "The HTML content of the resume PDF",
+                description: "The complete HTML document for the resume",
             },
         },
         required: ["html"],
     }
 
-    const prompt = `Generate a resume for a candidate based on the following information:
-Resume: ${resume}
-Self Description: ${selfDescription}
-Job Description: ${jobDescription}
-The resume should be in HTML format and should include the following sections:
-1. Header: The candidate's name, contact information, and a professional summary.
-2. Skills: A list of the candidate's skills relevant to the job description.
-3. Experience: A list of the candidate's work experience, including job titles, company names, and dates of employment.
-4. Education: A list of the candidate's educational qualifications, including degrees and institutions.
-5. Projects: A list of the candidate's relevant projects, including project titles and descriptions.
-6. Certifications: A list of the candidate's relevant certifications, if any.
-the resume should be tailored to the job description and should highlight the candidate's strengths and achievements.
-the content of resume should not sound like its generated by AI. It should be human-like and professional.
-highlight the content using some colors or different font styles to make it visually appealing. The resume should be in a single page and should be easy to read. The resume should be in a format that can be easily converted to PDF.
-the content should be ATS friendly, which will be easily parsable through ATS checker maintaining atleast 90+ ats score.
-`;
+    const prompt = `You are an expert resume writer. Generate a clean, ATS-optimized resume in HTML format based on the candidate information below.
+
+CANDIDATE RESUME TEXT:
+${resume}
+
+CANDIDATE SELF-DESCRIPTION / GOALS:
+${selfDescription || 'Not provided'}
+
+TARGET JOB DESCRIPTION:
+${jobDescription}
+
+STRICT FORMAT REQUIREMENTS — follow exactly:
+
+1. PAGE LAYOUT
+   - White background, black text only — NO colors, NO colored boxes, NO background shading
+   - Font: "Times New Roman", serif — exactly as a traditional academic/professional resume
+   - Page width: 100%, max-width 760px, margin: 0 auto, padding: 28px 32px
+   - Font size: 11px body, 20px name, 13px section headings
+   - Single page only — keep content concise
+
+2. HEADER (two-column layout, side by side)
+   - LEFT column: Candidate full name (large, bold), then degree on next line, then college/institution
+   - RIGHT column (text-align: right): phone, email, GitHub link, LinkedIn link — each on its own line
+   - A thin horizontal rule below the header
+
+3. SECTION HEADINGS
+   - ALL CAPS, font-variant: small-caps, bold
+   - Underlined with a full-width bottom border (border-bottom: 1.5px solid black)
+   - Sections in this order: Education, Personal Projects (or Experience Projects), Experience, Technical Skills and Interests, Positions of Responsibility (if any)
+
+4. EDUCATION SECTION
+   - Degree title in bold, institution in italic, date range right-aligned
+   - CGPA or grade on a new line
+
+5. PROJECTS SECTION
+   - Project name in bold preceded by a bullet •
+   - One-line italic description of the project
+   - Bullet points using em-dash (–) for each key point
+   - "Technology Used: ..." as the last bullet for each project
+
+6. EXPERIENCE SECTION
+   - Role/internship title in bold preceded by •, company in italic, date range right-aligned
+   - Bullet points using (–) for responsibilities
+
+7. SKILLS SECTION
+   - Inline format: "Languages: ...", "Frameworks: ...", "Tools: ...", "Databases: ...", "Coursework: ..."
+   - Each category label in bold, values in normal weight, all on one line per category
+
+8. ATS REQUIREMENTS
+   - Use plain text only inside tags — no SVG icons, no images, no tables for layout
+   - Use standard HTML: div, p, ul, li, span, hr, br
+   - All section names must be exact keywords (Education, Experience, Skills, Projects)
+   - Do NOT use CSS grid or flexbox for the skills section — use plain inline text
+   - Keyword-match skills and tools from the job description naturally in bullet points
+
+9. CONTENT RULES
+   - Extract real data from the resume text provided — do not invent details
+   - Tailor bullet points to emphasize skills relevant to the job description
+   - Keep language concise, action-verb led, quantified where possible
+   - Do NOT add a photo, objective statement, or summary paragraph
+   - Do NOT add fake contact info — use placeholders like [email] only if not present in resume
+
+Return a single complete HTML document with all CSS inlined in a <style> tag in <head>.`;
 
     try {
         const response = await generateContentWithFallback({
