@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import '../style/interview.scss'
 import { useInterview } from '../hooks/useInterview.js'
 import { useParams } from 'react-router'
+import Navbar from '../../../components/Navbar.jsx'
 
 const sectionNav = [
   { id: 'technical', label: 'Technical questions' },
@@ -73,6 +74,7 @@ const Interview = () => {
 
   return (
     <main className="interview-page">
+      <Navbar />
       <div className="interview-page__ambient interview-page__ambient--one" aria-hidden="true" />
       <div className="interview-page__ambient interview-page__ambient--two" aria-hidden="true" />
 

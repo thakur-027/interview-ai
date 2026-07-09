@@ -1,20 +1,22 @@
 @use "./styles/button.scss";
 
-*{
-    margin: 0%;
-    padding: 0%;
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
-html,
-body,
-#root{
+html, body, #root {
     width: 100%;
-    background-color: #1e1e1e;
-    color: #fff;
-    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    background-color: #060910;
+    color: #ecf2ff;
+    font-family: 'Sora', 'Trebuchet MS', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-.highlight{
-    color: #f9f871;
+a {
+    color: inherit;
+    text-decoration: none;
 }

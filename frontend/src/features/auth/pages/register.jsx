@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import '../auth.form.scss'
-import { useNavigate, Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../hooks/useAuth'
+import '../auth.form.scss'
 
 const Register = () => {
     const navigate = useNavigate()
@@ -20,72 +20,164 @@ const Register = () => {
         const result = await handleRegister({ username, email, password })
         setIsSubmitting(false)
         if (result.success) {
-            navigate('/')
+            navigate('/app')
         } else {
             setError(result.message)
         }
     }
 
     if (loading) {
-        return <main><p>Loading...</p></main>
+        return (
+            <div className="auth-loading" aria-busy="true">
+                <div className="auth-loading__spinner" aria-hidden="true" />
+            </div>
+        )
     }
 
     return (
-        <main>
-            <div className="form-container">
-                <h1>Register</h1>
-                <form onSubmit={handleSubmit}>
-                    {error && (
-                        <p className="form-error" role="alert">{error}</p>
-                    )}
-                    <div className="input-group">
-                        <label htmlFor="username">Username</label>
-                        <input
-                            onChange={(e) => setUsername(e.target.value)}
-                            value={username}
-                            type="text"
-                            id="username"
-                            name="username"
-                            placeholder="Enter your username"
-                            required
-                        />
+        <div className="auth-layout">
+            {/* Brand panel */}
+            <aside className="auth-brand" aria-label="InterviewGen brand">
+                <div className="auth-brand__glow auth-brand__glow--1" aria-hidden="true" />
+                <div className="auth-brand__glow auth-brand__glow--2" aria-hidden="true" />
+                <div className="auth-brand__content">
+                    <Link to="/" className="auth-brand__logo" aria-label="InterviewGen home">
+                        <span className="auth-brand__logo-icon" aria-hidden="true">
+                            <svg width="32" height="32" viewBox="0 0 28 28" fill="none">
+                                <rect width="28" height="28" rx="8" fill="url(#auth-logo-grad-r)" />
+                                <path d="M8 10h12M8 14h8M8 18h10" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+                                <circle cx="21" cy="18" r="3.5" fill="#fff" opacity="0.9" />
+                                <path d="M21 16.5v1.5l1 1" stroke="#7c3aed" strokeWidth="1.2" strokeLinecap="round" />
+                                <defs>
+                                    <linearGradient id="auth-logo-grad-r" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                                        <stop stopColor="#7c3aed" />
+                                        <stop offset="1" stopColor="#4f46e5" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </span>
+                        <span className="auth-brand__logo-name">Interview<span>Gen</span></span>
+                    </Link>
+
+                    <div className="auth-brand__main">
+                        <h1 className="auth-brand__headline">
+                            Your next offer<br />starts here.
+                        </h1>
+                        <p className="auth-brand__sub">
+                            Join thousands of candidates who use InterviewGen to walk into interviews prepared and confident.
+                        </p>
+
+                        <ul className="auth-brand__bullets" aria-label="Key features">
+                            {[
+                                'AI-powered match score in seconds',
+                                'Role-specific interview questions',
+                                'Personalized skill gap analysis',
+                                'ATS-optimized resume download',
+                            ].map((item) => (
+                                <li key={item}>
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                                        <path d="M2.5 7l3 3 6-6" stroke="#a78bfa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                    {item}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
-                    <div className="input-group">
-                        <label htmlFor="email">Email</label>
-                        <input
-                            onChange={(e) => setEmail(e.target.value)}
-                            value={email}
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="Enter your email"
-                            required
-                        />
-                    </div>
-                    <div className="input-group">
-                        <label htmlFor="password">Password</label>
-                        <input
-                            onChange={(e) => setPassword(e.target.value)}
-                            value={password}
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Enter your password"
-                            minLength={6}
-                            required
-                        />
-                    </div>
-                    <button
-                        className="button primary-button"
-                        type="submit"
-                        disabled={isSubmitting}
-                    >
-                        {isSubmitting ? 'Creating account…' : 'Register'}
-                    </button>
-                </form>
-                <p>Already have an account? <Link to="/login">Login</Link></p>
-            </div>
-        </main>
+                </div>
+            </aside>
+
+            {/* Form panel */}
+            <main className="auth-form-panel" aria-label="Create account">
+                <nav className="auth-form-panel__nav" aria-label="Back to home">
+                    <Link to="/" className="auth-back-link">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                            <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        Back to home
+                    </Link>
+                </nav>
+
+                <div className="auth-form-panel__inner">
+                    <header className="auth-form-panel__header">
+                        <h2>Create your account</h2>
+                        <p>Free to start. No credit card required.</p>
+                    </header>
+
+                    <form onSubmit={handleSubmit} className="auth-form" noValidate>
+                        {error && (
+                            <div className="form-error" role="alert" aria-live="assertive">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                                    <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5" />
+                                    <path d="M8 5v3.5M8 11h.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                                </svg>
+                                {error}
+                            </div>
+                        )}
+
+                        <div className="auth-field">
+                            <label htmlFor="username">Username</label>
+                            <input
+                                id="username"
+                                name="username"
+                                type="text"
+                                autoComplete="username"
+                                placeholder="Choose a username"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <div className="auth-field">
+                            <label htmlFor="email">Email address</label>
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                autoComplete="email"
+                                placeholder="you@example.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <div className="auth-field">
+                            <label htmlFor="password">Password</label>
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                autoComplete="new-password"
+                                placeholder="At least 6 characters"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                minLength={6}
+                                required
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="button primary-button auth-submit"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? (
+                                <>
+                                    <span className="auth-submit__spinner" aria-hidden="true" />
+                                    Creating account…
+                                </>
+                            ) : 'Create account'}
+                        </button>
+                    </form>
+
+                    <p className="auth-switch">
+                        Already have an account?{' '}
+                        <Link to="/login">Sign in</Link>
+                    </p>
+                </div>
+            </main>
+        </div>
     )
 }
 

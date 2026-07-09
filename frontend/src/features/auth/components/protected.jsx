@@ -1,19 +1,24 @@
-import { useAuth } from "../hooks/useAuth";
-import { Navigate, useNavigate } from "react-router";
 import React from 'react'
+import { Navigate } from 'react-router'
+import { useAuth } from '../hooks/useAuth'
+import '../auth.form.scss'
 
-const Protected = ({ children }) => {                                                                                                  
+const ProtectedRoute = ({ children }) => {
     const { loading, user } = useAuth()
 
     if (loading) {
-        return (<main><h1>Loading...</h1></main>)
+        return (
+            <div className="auth-loading" aria-busy="true" aria-label="Loading">
+                <div className="auth-loading__spinner" aria-hidden="true" />
+            </div>
+        )
     }
 
     if (!user) {
-        return <Navigate to={'/login'} />
+        return <Navigate to="/login" replace />
     }
 
     return children
 }
 
-export default Protected
+export default ProtectedRoute

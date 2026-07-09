@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react'
 import '../style/home.scss'
 import { useInterview } from '../hooks/useInterview.js'
-import { useAuth } from '../../auth/hooks/useAuth.js'
 import { useNavigate } from 'react-router'
+import Navbar from '../../../components/Navbar.jsx'
 
 const Home = () => {
     const { generateReport, reports, getAllReports } = useInterview()
-    const { user, handleLogout } = useAuth()
     const navigate = useNavigate()
 
     const [jobDescription, setJobDescription] = useState('')
@@ -62,40 +61,13 @@ const Home = () => {
 
     return (
         <main className="home">
+            <Navbar />
             <div className="home__ambient home__ambient--one" aria-hidden="true" />
             <div className="home__ambient home__ambient--two" aria-hidden="true" />
             <div className="home__ambient home__ambient--grid" aria-hidden="true" />
 
             <section className="home__shell">
-                <header className="home__topbar">
-                    <div className="brand">
-                        <h1>
-                            Interview<span>Gen</span>
-                        </h1>
-                        <div className="brand__meta">
-                            <span className="dot" aria-hidden="true" />
-                            <span>Ready for analysis</span>
-                        </div>
-                    </div>
-
-                    <div className="topbar__insights" aria-label="User info">
-                        <article>
-                            <p>Signed in as</p>
-                            <strong>{user?.username}</strong>
-                        </article>
-                        <article>
-                            <p>AI Model</p>
-                            <strong>Gemini Flash</strong>
-                        </article>
-                        <button
-                            type="button"
-                            className="button topbar__logout"
-                            onClick={handleLogout}
-                        >
-                            Sign out
-                        </button>
-                    </div>
-                </header>
+                <div className="home__shell-top-spacer" aria-hidden="true" />
 
                 <section className="home__workspace" aria-label="Candidate input form">
                     <article className="panel panel--description">

@@ -49,8 +49,8 @@
 
 	.interview-layout {
 		width: min(1300px, calc(100% - 2rem));
-		margin: 1.25rem auto;
-		min-height: calc(100vh - 2.5rem);
+		margin: 5rem auto 1.25rem; // top clears fixed navbar
+		min-height: calc(100vh - 6rem);
 		border: 1px solid var(--line);
 		border-radius: 1.05rem;
 		background: linear-gradient(180deg, rgba(5, 10, 18, 0.96) 0%, rgba(4, 9, 16, 0.9) 100%);

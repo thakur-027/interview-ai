@@ -69,6 +69,11 @@
         position: relative;
         z-index: 1;
         overflow: hidden;
+        margin-top: 5.5rem; // clear fixed navbar
+    }
+
+    .home__shell-top-spacer {
+        height: 1.5rem;
     }
 
     .home__topbar {
