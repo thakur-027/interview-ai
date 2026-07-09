@@ -1,16 +1,20 @@
-import React, {useEffect, useState, useRef} from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import '../style/home.scss'
-import {useInterview} from '../hooks/useInterview.js'
-import {useNavigate} from 'react-router'
+import { useInterview } from '../hooks/useInterview.js'
+import { useAuth } from '../../auth/hooks/useAuth.js'
+import { useNavigate } from 'react-router'
 
 const Home = () => {
-    const {generateReport, reports, getAllReports} = useInterview()
+    const { generateReport, reports, getAllReports } = useInterview()
+    const { user, handleLogout } = useAuth()
     const navigate = useNavigate()
+
     const [jobDescription, setJobDescription] = useState('')
     const [selfDescription, setSelfDescription] = useState('')
     const [resumeFileName, setResumeFileName] = useState('No file selected')
     const [resumeFileFormat, setResumeFileFormat] = useState('')
     const [isGeneratingReport, setIsGeneratingReport] = useState(false)
+    const [generateError, setGenerateError] = useState(null)
     const resumeInputRef = useRef(null)
 
     useEffect(() => {
@@ -19,35 +23,42 @@ const Home = () => {
 
     const handleResumeChange = (event) => {
         const file = event.target.files?.[0]
-
         if (!file) {
             setResumeFileName('No file selected')
             setResumeFileFormat('')
             return
         }
-
         const fileNameParts = file.name.split('.')
         const fileFormat = fileNameParts.length > 1 ? fileNameParts.pop().toUpperCase() : 'FILE'
-
         setResumeFileName(file.name)
         setResumeFileFormat(fileFormat)
+    }
+
+    const handleClearJobDescription = () => {
+        setJobDescription('')
     }
 
     const handleGenerateReport = async () => {
         const resumeFile = resumeInputRef.current.files?.[0]
         if (!resumeFile) {
+            setGenerateError('Please upload a resume file.')
             return
         }
-
+        if (!jobDescription.trim()) {
+            setGenerateError('Please enter a job description.')
+            return
+        }
+        setGenerateError(null)
         setIsGeneratingReport(true)
         try {
-            const data = await generateReport({resumeFile, selfDescription, jobDescription})
+            const data = await generateReport({ resumeFile, selfDescription, jobDescription })
             navigate(`/interview/${data._id}`)
+        } catch (err) {
+            setGenerateError(err?.message || 'Failed to generate report. Please try again.')
         } finally {
             setIsGeneratingReport(false)
         }
     }
-
 
     return (
         <main className="home">
@@ -64,19 +75,25 @@ const Home = () => {
                         <div className="brand__meta">
                             <span className="dot" aria-hidden="true" />
                             <span>Ready for analysis</span>
-                            <span className="version">v1.0.4</span>
                         </div>
                     </div>
 
-                    <div className="topbar__insights" aria-label="System insights">
+                    <div className="topbar__insights" aria-label="User info">
                         <article>
-                            <p>Analysis Model</p>
-                            <strong>Advanced Heuristics Engine</strong>
+                            <p>Signed in as</p>
+                            <strong>{user?.username}</strong>
                         </article>
                         <article>
-                            <p>Security</p>
-                            <strong>TLS 1.3 Encryption</strong>
+                            <p>AI Model</p>
+                            <strong>Gemini Flash</strong>
                         </article>
+                        <button
+                            type="button"
+                            className="button topbar__logout"
+                            onClick={handleLogout}
+                        >
+                            Sign out
+                        </button>
                     </div>
                 </header>
 
@@ -91,18 +108,18 @@ const Home = () => {
                                 </svg>
                             </span>
                             <label htmlFor="jobDescription">Job Description</label>
-                            <p className="panel__meta">Auto-saving...</p>
                         </div>
 
                         <textarea
-                            onChange={(e) => {setJobDescription(e.target.value)}}
+                            onChange={(e) => setJobDescription(e.target.value)}
+                            value={jobDescription}
                             name="jobDescription"
                             id="jobDescription"
                             placeholder="Paste the target job description here. Include key requirements and core responsibilities for a comprehensive report."
                         />
                         <div className="panel__footer">
-                            <p className="panel__hint">0 characters</p>
-                            <button type="button">Clear</button>
+                            <p className="panel__hint">{jobDescription.length} characters</p>
+                            <button type="button" onClick={handleClearJobDescription}>Clear</button>
                         </div>
                     </article>
 
@@ -138,7 +155,14 @@ const Home = () => {
                                     {resumeFileFormat && <span>{resumeFileFormat}</span>}
                                 </div>
                             </label>
-                                <input ref={resumeInputRef} onChange={handleResumeChange} hidden type="file" id="resume" accept=".pdf,.doc,.docx" />
+                            <input
+                                ref={resumeInputRef}
+                                onChange={handleResumeChange}
+                                hidden
+                                type="file"
+                                id="resume"
+                                accept=".pdf,.doc,.docx"
+                            />
                         </article>
 
                         <article className="panel panel--self-description">
@@ -150,11 +174,12 @@ const Home = () => {
                                         <path d="M18.5 8.5H21M19.75 7.25V9.75" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
                                     </svg>
                                 </span>
-                                <label htmlFor="selfDescription">Context & Goals</label>
+                                <label htmlFor="selfDescription">Context &amp; Goals</label>
                             </div>
 
                             <textarea
-                                onChange={(e) => {setSelfDescription(e.target.value)}}
+                                onChange={(e) => setSelfDescription(e.target.value)}
+                                value={selfDescription}
                                 name="selfDescription"
                                 id="selfDescription"
                                 placeholder="Describe unique career highlights, specific goals, or nuances you want emphasized in this specific interview..."
@@ -162,11 +187,15 @@ const Home = () => {
                             <p className="panel__tiny-tag">Optional context</p>
                         </article>
 
+                        {generateError && (
+                            <p className="home__error" role="alert">{generateError}</p>
+                        )}
+
                         <button
-                        onClick = {handleGenerateReport}
-                        className="button primary-button home__action"
-                        type="button"
-                        disabled={isGeneratingReport}
+                            onClick={handleGenerateReport}
+                            className="button primary-button home__action"
+                            type="button"
+                            disabled={isGeneratingReport}
                         >
                             <span>{isGeneratingReport ? 'Generating report…' : 'Generate Interview Report'}</span>
                             <span className="home__action-icon" aria-hidden="true">
@@ -198,7 +227,9 @@ const Home = () => {
                                             <h3>{report.title}</h3>
                                             <span className="report-card__score">{report.matchScore}%</span>
                                         </div>
-                                        <p className="report-card__meta">Created on {new Date(report.createdAt).toLocaleDateString()}</p>
+                                        <p className="report-card__meta">
+                                            Created on {new Date(report.createdAt).toLocaleDateString()}
+                                        </p>
                                     </a>
                                 </li>
                             ))}
@@ -207,26 +238,6 @@ const Home = () => {
                         <p className="recent-reports__empty">No saved reports yet. Generate one to see it here.</p>
                     )}
                 </section>
-
-                <footer className="home__statusbar" aria-label="System status">
-                    <div className="status-user">
-                        <span className="status-user__avatar" aria-hidden="true">A</span>
-                        <div>
-                            <p>Recruiter Pro</p>
-                            <small>AI Analyst</small>
-                        </div>
-                    </div>
-
-                    <div className="status-metric">
-                        <p>System latency</p>
-                        <strong>42ms response time</strong>
-                    </div>
-
-                    <div className="status-tags">
-                        <span>GDPR compliant</span>
-                        <span>GPT-4 turbo</span>
-                    </div>
-                </footer>
             </section>
 
             {isGeneratingReport && (

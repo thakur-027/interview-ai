@@ -713,3 +713,36 @@
         }
     }
 }
+
+    // Error state for report generation
+    .home__error {
+        margin: 0;
+        padding: 0.6rem 0.85rem;
+        border-radius: 0.55rem;
+        background: rgba(220, 60, 60, 0.1);
+        border: 1px solid rgba(220, 60, 60, 0.3);
+        color: #f87171;
+        font-size: 0.8rem;
+        line-height: 1.5;
+    }
+
+    // Sign out button in topbar
+    .topbar__logout {
+        align-self: center;
+        border: 1px solid rgba(130, 150, 180, 0.28);
+        background: transparent;
+        color: #a5b2cd;
+        border-radius: 0.45rem;
+        padding: 0.4rem 0.9rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        cursor: pointer;
+        transition: border-color 0.2s, color 0.2s;
+
+        &:hover {
+            border-color: rgba(248, 113, 113, 0.5);
+            color: #f87171;
+        }
+    }

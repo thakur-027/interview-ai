@@ -26,12 +26,23 @@ const sendAiError = (res, error, fallbackMessage) => {
 
 
 /**
- *@description Controller to generate interview report based on user self description, resume, and job description
+ * @description Controller to generate interview report based on user self description, resume, and job description
  */
 async function generateInterviewReportController(req, res){
     try {
-        const resumeContent = await new PDFParse({ data: req.file.buffer }).getText()
+        if (!req.file) {
+            return res.status(400).json({ message: 'Resume file is required' })
+        }
+
         const { selfDescription, jobDescription } = req.body
+
+        if (!jobDescription?.trim()) {
+            return res.status(400).json({ message: 'Job description is required' })
+        }
+
+        const parser = new PDFParse({ data: req.file.buffer })
+        const resumeContent = await parser.getText()
+
         const title = jobDescription
             ?.split('\n')
             .find((line) => line.trim())
@@ -65,26 +76,39 @@ async function generateInterviewReportController(req, res){
  * @description Controller to get interview report by ID
  */
 async function getInterviewReportByIdController(req, res){
-    const { interviewId } = req.params
-    const interviewReport = await interviewReportModel.findOne({ _id: interviewId, user: req.user.id })
-    if (!interviewReport) {
-        return res.status(404).json({ message: 'Interview report not found' })
+    try {
+        const { interviewId } = req.params
+        const interviewReport = await interviewReportModel.findOne({ _id: interviewId, user: req.user.id })
+        if (!interviewReport) {
+            return res.status(404).json({ message: 'Interview report not found' })
+        }
+        res.status(200).json({ 
+            message: 'Interview report found',
+            interviewReport
+        })
+    } catch (error) {
+        console.error('Error fetching interview report:', error)
+        res.status(500).json({ message: 'Failed to fetch interview report' })
     }
-    res.status(200).json({ 
-        message: 'Interview report found',
-        interviewReport
-    })
 }
 
 /**
  * @description Controller to get all interview reports of the user
  */
 async function getAllInterviewReportsController(req, res){
-    const interviewReports = await interviewReportModel.find({ user: req.user.id }).sort({ createdAt: -1 }).select('-resume -selfDescription -jobDescription -__v -technicalQuestions -behavioralQuestions -skillGaps -preparationPlan')
-    res.status(200).json({ 
-        message: 'Interview reports found',
-        interviewReports
-    })
+    try {
+        const interviewReports = await interviewReportModel
+            .find({ user: req.user.id })
+            .sort({ createdAt: -1 })
+            .select('-resume -selfDescription -jobDescription -__v -technicalQuestions -behavioralQuestions -skillGaps -preparationPlan')
+        res.status(200).json({ 
+            message: 'Interview reports found',
+            interviewReports
+        })
+    } catch (error) {
+        console.error('Error fetching interview reports:', error)
+        res.status(500).json({ message: 'Failed to fetch interview reports' })
+    }
 }
 
 /**

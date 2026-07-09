@@ -1,5 +1,4 @@
 const { GoogleGenAI, Type } = require("@google/genai");
-
 const isProd = process.env.NODE_ENV === "production";
 const puppeteer = isProd ? require("puppeteer-core") : require("puppeteer");
 

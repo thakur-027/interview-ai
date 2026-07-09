@@ -41,3 +41,14 @@ main{
 
     }
 }
+
+.form-error {
+    margin: 0;
+    padding: 0.65rem 0.85rem;
+    border-radius: 0.5rem;
+    background: rgba(220, 60, 60, 0.12);
+    border: 1px solid rgba(220, 60, 60, 0.35);
+    color: #f87171;
+    font-size: 0.82rem;
+    line-height: 1.5;
+}

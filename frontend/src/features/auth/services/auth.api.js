@@ -5,42 +5,44 @@ const api = axios.create({
     withCredentials: true
 });
 
-export async function register({username, email, password}) {
-    try{
-    const response = await api.post("/api/auth/register", {
-        username, email, password
-    })
-    return response.data
-    }catch(err){
-    console.log(err)
-    }
-}   
+// Extracts the error message from an Axios error response
+const getApiError = (err) =>
+    err?.response?.data?.message || err?.message || 'Something went wrong'
 
-export async function login({email, password}) {
-    try{
-        const response = await api.post("/api/auth/login", {
-            email, password
-        })
+export async function register({ username, email, password }) {
+    try {
+        const response = await api.post("/api/auth/register", { username, email, password })
         return response.data
-    }catch(err){
-        console.log(err)
+    } catch (err) {
+        throw new Error(getApiError(err))
     }
 }
 
-export async function logout(){
-    try{
+export async function login({ email, password }) {
+    try {
+        const response = await api.post("/api/auth/login", { email, password })
+        return response.data
+    } catch (err) {
+        throw new Error(getApiError(err))
+    }
+}
+
+export async function logout() {
+    try {
         const response = await api.post("/api/auth/logout")
         return response.data
-    }catch(err){
-        console.log(err)
+    } catch (err) {
+        throw new Error(getApiError(err))
     }
 }
 
-export async function getMe(){
-    try{
+export async function getMe() {
+    try {
         const response = await api.get("/api/auth/get-me")
         return response.data
-    }catch(err){
-        console.log(err)
+    } catch (err) {
+        // 401 means not logged in — not a real error, return null
+        if (err?.response?.status === 401) return null
+        throw new Error(getApiError(err))
     }
 }

@@ -598,3 +598,40 @@
 		}
 	}
 }
+
+// Loading state
+.interview-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: 1rem;
+    color: #8a98b4;
+    font-size: 0.9rem;
+
+    &__spinner {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        border: 0.35rem solid rgba(255, 255, 255, 0.1);
+        border-top-color: #8b5cf6;
+        animation: spin 0.9s linear infinite;
+    }
+}
+
+// Download error in left nav
+.left-nav__error {
+    margin: 0 0 0.75rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.45rem;
+    background: rgba(220, 60, 60, 0.1);
+    border: 1px solid rgba(220, 60, 60, 0.28);
+    color: #f87171;
+    font-size: 0.76rem;
+    line-height: 1.5;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
