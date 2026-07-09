@@ -17,13 +17,13 @@
     text-decoration: none;
 
     &.primary-button {
-        background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
-        color: #fff;
-        box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
+        background: linear-gradient(135deg, #6B7AFF 0%, #00D4FF 100%);
+        color: #0d0f1a;
+        box-shadow: 0 8px 24px rgba(0, 212, 255, 0.25);
 
         &:hover {
             transform: translateY(-1px);
-            box-shadow: 0 12px 28px rgba(124, 58, 237, 0.45);
+            box-shadow: 0 12px 28px rgba(0, 212, 255, 0.35);
         }
     }
 

@@ -45,7 +45,7 @@
         letter-spacing: -0.02em;
 
         span {
-            color: #8b5cf6;
+            color: #00D4FF;
         }
     }
 
@@ -73,7 +73,7 @@
 
         &--active {
             color: #ecf2ff;
-            background: rgba(139, 92, 246, 0.12);
+            background: rgba(0, 212, 255, 0.1);
         }
     }
 
@@ -95,12 +95,12 @@
         width: 1.75rem;
         height: 1.75rem;
         border-radius: 50%;
-        background: linear-gradient(135deg, #7c3aed, #4f46e5);
+        background: linear-gradient(135deg, #6B7AFF, #00D4FF);
         display: grid;
         place-items: center;
         font-size: 0.72rem;
         font-weight: 700;
-        color: #fff;
+        color: #0d0f1a;
         flex-shrink: 0;
     }
 
@@ -183,3 +183,4 @@
         &__mobile-drawer { display: flex; }
     }
 }
+

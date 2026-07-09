@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../hooks/useAuth'
+import LogoIcon from '../../../components/LogoIcon.jsx'
 import '../auth.form.scss'
 
 const Login = () => {
@@ -42,18 +43,7 @@ const Login = () => {
                 <div className="auth-brand__content">
                     <Link to="/" className="auth-brand__logo" aria-label="InterviewGen home">
                         <span className="auth-brand__logo-icon" aria-hidden="true">
-                            <svg width="32" height="32" viewBox="0 0 28 28" fill="none">
-                                <rect width="28" height="28" rx="8" fill="url(#auth-logo-grad)" />
-                                <path d="M8 10h12M8 14h8M8 18h10" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
-                                <circle cx="21" cy="18" r="3.5" fill="#fff" opacity="0.9" />
-                                <path d="M21 16.5v1.5l1 1" stroke="#7c3aed" strokeWidth="1.2" strokeLinecap="round" />
-                                <defs>
-                                    <linearGradient id="auth-logo-grad" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
-                                        <stop stopColor="#7c3aed" />
-                                        <stop offset="1" stopColor="#4f46e5" />
-                                    </linearGradient>
-                                </defs>
-                            </svg>
+                            <LogoIcon size={34} id="login-brand" />
                         </span>
                         <span className="auth-brand__logo-name">Interview<span>Gen</span></span>
                     </Link>
@@ -75,7 +65,7 @@ const Login = () => {
                             ].map((item) => (
                                 <li key={item}>
                                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                                        <path d="M2.5 7l3 3 6-6" stroke="#a78bfa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M2.5 7l3 3 6-6" stroke="#00D4FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
                                     {item}
                                 </li>

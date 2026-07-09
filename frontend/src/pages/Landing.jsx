@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 import Navbar from '../components/Navbar'
+import LogoIcon from '../components/LogoIcon'
 import './Landing.scss'
 
 const features = [
@@ -110,7 +111,7 @@ const Landing = () => {
 
                     <p className="landing__subline">
                         Upload your resume, paste a job description, and get a complete
-                        AI-powered interview report — match score, skill gaps, tailored
+                        AI-powered interview report - match score, skill gaps, tailored
                         questions, and a day-by-day prep plan.
                     </p>
 
@@ -139,7 +140,7 @@ const Landing = () => {
                         <div className="hero-card__score-row">
                             <div className="hero-card__score-ring">
                                 <svg viewBox="0 0 80 80">
-                                    <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(139,92,246,0.15)" strokeWidth="7" />
+                                    <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(107,122,255,0.15)" strokeWidth="7" />
                                     <circle cx="40" cy="40" r="32" fill="none" stroke="url(#score-grad)" strokeWidth="7"
                                         strokeLinecap="round"
                                         strokeDasharray="201"
@@ -148,8 +149,8 @@ const Landing = () => {
                                     />
                                     <defs>
                                         <linearGradient id="score-grad" x1="0" y1="0" x2="1" y2="0">
-                                            <stop offset="0%" stopColor="#8b5cf6" />
-                                            <stop offset="100%" stopColor="#4f46e5" />
+                                            <stop offset="0%" stopColor="#6B7AFF" />
+                                            <stop offset="100%" stopColor="#00D4FF" />
                                         </linearGradient>
                                     </defs>
                                 </svg>
@@ -260,9 +261,12 @@ const Landing = () => {
             <footer className="landing__footer" role="contentinfo">
                 <div className="landing__footer-inner">
                     <div className="landing__footer-brand">
-                        <span className="landing__logo-text">
-                            Interview<span>Gen</span>
-                        </span>
+                        <div className="landing__footer-logo">
+                            <LogoIcon size={22} id="footer" />
+                            <span className="landing__logo-text">
+                                Interview<span>Gen</span>
+                            </span>
+                        </div>
                         <p>AI-powered interview preparation.</p>
                     </div>
                     <nav className="landing__footer-links" aria-label="Footer navigation">
