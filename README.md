@@ -271,6 +271,3 @@ npm run dev
 - Check your Gemini API key and project quota.
 - Make sure `MONGO_URI` is valid and reachable.
 
-## License
-
-MIT
