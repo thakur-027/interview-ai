@@ -19,6 +19,10 @@ const authRouter = require('./routes/auth.routes');
 /**
  * use the routes here with app.use()
  */
+app.get('/', (req, res) => {
+  res.status(200).send('Interview AI Backend is running');
+});
+
 app.use('/api/auth', authRouter);
 
 app.use('/api/interview', require('./routes/interview.routes'));
