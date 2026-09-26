@@ -7,8 +7,8 @@ const ai = new GoogleGenAI({
 });
 
 const geminiModels = [
-    process.env.GEMINI_MODEL || "gemini-3-flash-preview",
-    "gemini-2.0-flash",
+    process.env.GEMINI_MODEL || "gemini-3.8-flash",
+    "gemini-3-flash-preview",
 ];
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -222,12 +222,12 @@ function buildInterviewReportFallback({ resume = "", selfDescription = "", jobDe
 function buildResumeHtmlFallback({ resume, selfDescription, jobDescription }) {
     // Parse resume content for sections
     const resumeLines = (resume || '').split(/\r?\n/).filter(line => line.trim());
-    
+
     // Extract basic info (very naive extraction)
     const nameMatch = resumeLines[0] || 'Candidate Name';
     const emailMatch = resume.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/) || ['candidate@email.com'];
     const phoneMatch = resume.match(/[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}/) || ['+1-xxx-xxx-xxxx'];
-    
+
     // Extract skills from resume or job description
     const skillKeywords = ['JavaScript', 'Python', 'React', 'Node.js', 'MongoDB', 'AWS', 'Docker', 'Kubernetes', 'Git', 'TypeScript', 'SQL'];
     const foundSkills = skillKeywords.filter(skill => {
@@ -236,7 +236,7 @@ function buildResumeHtmlFallback({ resume, selfDescription, jobDescription }) {
     });
     const languages = foundSkills.slice(0, 5).join(', ') || 'Programming Languages';
     const frameworks = 'Web Frameworks, Cloud Services';
-    
+
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -588,12 +588,12 @@ async function generatePdfFromHtml(htmlContent) {
         return pdfBuffer
     } finally {
         if (browser) {
-            await browser.close().catch(() => {})
+            await browser.close().catch(() => { })
         }
     }
 }
 
-async function generateResumePdf({resume, selfDescription, jobDescription}) {
+async function generateResumePdf({ resume, selfDescription, jobDescription }) {
 
     const resumePdfSchema = {
         type: Type.OBJECT,
