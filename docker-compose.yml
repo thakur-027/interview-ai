@@ -1,0 +1,45 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: interview-ai-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: interview-ai-backend
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    ports:
+      - "3000:3000"
+    environment:
+      # "mongo" here is the service name above - Docker's internal DNS
+      # resolves it to that container's IP. Containers on the same
+      # compose network can reach each other by service name.
+      MONGO_URI: mongodb://mongo:27017/interview-ai
+      JWT_SECRET: ${JWT_SECRET}
+      GOOGLE_GENAI_API_KEY: ${GOOGLE_GENAI_API_KEY}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.0-flash}
+      CLIENT_URL: http://localhost:5173
+      # deliberately NOT "production" - that flips cookies to secure-only,
+      # which browsers refuse to send over plain http://localhost
+      NODE_ENV: development
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:3000
+    container_name: interview-ai-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+
+volumes:
+  mongo-data:
