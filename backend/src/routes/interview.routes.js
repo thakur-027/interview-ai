@@ -2,6 +2,9 @@ const express = require('express');
 const authMiddleware = require('../middlewares/auth.middleware');
 const interviewController = require('../controllers/interview.controller');
 const upload = require('../middlewares/file.middleware');
+const validate = require('../middlewares/validate.middleware');
+const { aiLimiter } = require('../middlewares/rateLimiter.middleware');
+const { generateReportSchema } = require('../validations/interview.validation');
 
 const interviewRouter = express.Router();
 
@@ -10,9 +13,11 @@ const interviewRouter = express.Router();
  * @description generate new inteview report on basis of user self description, resume, and job description
  * @access private
  */
-interviewRouter.post('/', 
-    authMiddleware.authUser, 
-    upload.single('resume'), 
+interviewRouter.post('/',
+    authMiddleware.authUser,
+    aiLimiter,
+    upload.single('resume'),
+    validate(generateReportSchema),
     interviewController.generateInterviewReportController);
 
 /**
@@ -20,8 +25,8 @@ interviewRouter.post('/',
  * @description get interview report by ID
  * @access private
  */
-interviewRouter.get('/report/:interviewId', 
-    authMiddleware.authUser, 
+interviewRouter.get('/report/:interviewId',
+    authMiddleware.authUser,
     interviewController.getInterviewReportByIdController);
 
 /**
@@ -29,8 +34,8 @@ interviewRouter.get('/report/:interviewId',
  * @description get all interview reports of the user
  * @access private
  */
-interviewRouter.get('/', 
-    authMiddleware.authUser, 
+interviewRouter.get('/',
+    authMiddleware.authUser,
     interviewController.getAllInterviewReportsController);
 
 /**
@@ -40,6 +45,7 @@ interviewRouter.get('/',
  */
 interviewRouter.post('/resume/pdf/:interviewReportId',
     authMiddleware.authUser,
+    aiLimiter,
     interviewController.generateResumePdfController
 )
 

@@ -1,8 +1,14 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+
+const { notFound, errorHandler } = require('./middlewares/error.middleware');
 
 const app = express();
+app.use(helmet());
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
@@ -26,5 +32,9 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRouter);
 
 app.use('/api/interview', require('./routes/interview.routes'));
+
+// keep these last: 404 catch-all, then the error handler
+app.use(notFound);
+app.use(errorHandler);
 
 module.exports = app;

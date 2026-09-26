@@ -9,29 +9,15 @@ const cookieOptions = {
     sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
 };
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 /**
  * @name registerUserController
  * @description Register a new user, expects username, email and password in the request body
+ *              (shape/format already validated by the registerSchema middleware)
  * @access Public
  */
-async function registerUserController(req, res){
+async function registerUserController(req, res) {
     try {
-        const {username, email, password} = req.body;
-
-        if (!username || !email || !password) {
-            return res.status(400).json({ message: 'Username, email and password are required' });
-        }
-        if (!EMAIL_REGEX.test(email)) {
-            return res.status(400).json({ message: 'Invalid email address' });
-        }
-        if (password.length < 6) {
-            return res.status(400).json({ message: 'Password must be at least 6 characters' });
-        }
-        if (username.trim().length < 2) {
-            return res.status(400).json({ message: 'Username must be at least 2 characters' });
-        }
+        const { username, email, password } = req.body;
 
         const isUserAlreadyExists = await userModel.findOne({ $or: [{ username }, { email }] });
         if (isUserAlreadyExists) {
@@ -62,16 +48,9 @@ async function registerUserController(req, res){
  * @description Login a user, expects email and password in the request body
  * @access Public
  */
-async function loginUserController(req, res){
+async function loginUserController(req, res) {
     try {
         const { email, password } = req.body;
-
-        if (!email || !password) {
-            return res.status(400).json({ message: 'Email and password are required' });
-        }
-        if (!EMAIL_REGEX.test(email)) {
-            return res.status(400).json({ message: 'Invalid email address' });
-        }
 
         const user = await userModel.findOne({ email });
         if (!user) {
@@ -104,7 +83,7 @@ async function loginUserController(req, res){
  * @description Logout a user by clearing the token cookie and blacklisting the token
  * @access Public
  */
-async function logoutUserController(req, res){
+async function logoutUserController(req, res) {
     try {
         const token = req.cookies.token;
         if (token) {
@@ -123,7 +102,7 @@ async function logoutUserController(req, res){
  * @description Get the currently logged-in user's information
  * @access Private
  */
-async function getMeController(req, res){
+async function getMeController(req, res) {
     try {
         const user = await userModel.findById(req.user.id);
         if (!user) {

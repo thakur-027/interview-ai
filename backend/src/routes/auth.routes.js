@@ -1,6 +1,9 @@
-const {Router} = require('express');
+const { Router } = require('express');
 const authController = require('../controllers/auth.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
+const validate = require('../middlewares/validate.middleware');
+const { registerLimiter, loginLimiter } = require('../middlewares/rateLimiter.middleware');
+const { registerSchema, loginSchema } = require('../validations/auth.validation');
 const authRouter = Router();
 
 /**
@@ -8,14 +11,14 @@ const authRouter = Router();
  * @description Register a new user
  * @access Public
  */
-authRouter.post('/register', authController.registerUserController);
+authRouter.post('/register', registerLimiter, validate(registerSchema), authController.registerUserController);
 
 /**
  * @route POST /api/auth/login
  * @description Login a user with email and password
  * @access Public
  */
-authRouter.post('/login', authController.loginUserController);
+authRouter.post('/login', loginLimiter, validate(loginSchema), authController.loginUserController);
 
 /**
  * @route POST /api/auth/logout
