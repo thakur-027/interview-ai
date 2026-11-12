@@ -1,296 +1,66 @@
-// ── Auth layout (split panel) ──
 .auth-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 0.95fr) minmax(420px, 1.05fr);
     min-height: 100vh;
-    background: #0d0f1a;
-
-    @media (max-width: 768px) {
-        grid-template-columns: 1fr;
-    }
+    background: #f8fafb;
 }
 
-// ── Brand side ──
 .auth-brand {
     position: relative;
-    overflow: hidden;
-    background: linear-gradient(160deg, #0d0f1a 0%, #111321 100%);
-    border-right: 1px solid rgba(130, 150, 180, 0.12);
     display: flex;
-    align-items: stretch;
+    overflow: hidden;
+    background: #10182b;
+    color: #f8fafc;
+    isolation: isolate;
 
-    @media (max-width: 768px) {
-        display: none;
-    }
-
-    &__glow {
+    &::before {
+        content: '';
         position: absolute;
-        border-radius: 50%;
-        pointer-events: none;
-        filter: blur(70px);
+        inset: 0;
+        opacity: 0.45;
+        background-image: linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+        background-size: 50px 50px;
+        mask-image: linear-gradient(to bottom, transparent, #000 20%, #000 80%, transparent);
+        z-index: -1;
     }
 
-    &__glow--1 {
-        width: 30rem;
-        height: 30rem;
-        top: -8rem;
-        left: -8rem;
-        background: radial-gradient(circle, rgba(0, 212, 255, 0.25) 0%, transparent 70%);
-    }
-
-    &__glow--2 {
-        width: 24rem;
-        height: 24rem;
-        bottom: -6rem;
-        right: -6rem;
-        background: radial-gradient(circle, rgba(107, 122, 255, 0.2) 0%, transparent 70%);
-    }
-
-    &__content {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        flex-direction: column;
-        padding: 2.5rem 3rem;
-        width: 100%;
-    }
-
-    &__logo {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.65rem;
-        text-decoration: none;
-        margin-bottom: auto;
-    }
-
-    &__logo-icon {
-        display: flex;
-        align-items: center;
-    }
-
-    &__logo-name {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #ecf2ff;
-        letter-spacing: -0.02em;
-
-        span { color: #00D4FF; }
-    }
-
-    &__main {
-        padding: 3rem 0;
-    }
-
-    &__headline {
-        font-size: clamp(1.8rem, 2.5vw, 2.4rem);
-        font-weight: 800;
-        letter-spacing: -0.03em;
-        line-height: 1.18;
-        color: #f0f4ff;
-        margin-bottom: 1rem;
-    }
-
-    &__sub {
-        font-size: 0.9rem;
-        line-height: 1.7;
-        color: #8a98b4;
-        margin-bottom: 2rem;
-        max-width: 340px;
-    }
-
-    &__bullets {
-        list-style: none;
-        display: flex;
-        flex-direction: column;
-        gap: 0.8rem;
-
-        li {
-            display: flex;
-            align-items: center;
-            gap: 0.65rem;
-            font-size: 0.85rem;
-            color: #c5d0e8;
-            font-weight: 500;
-
-            svg { flex-shrink: 0; }
-        }
-    }
+    @media (max-width: 768px) { display: none; }
+    &__glow { position: absolute; border-radius: 50%; pointer-events: none; filter: blur(70px); z-index: -1; }
+    &__glow--1 { width: 30rem; height: 30rem; top: -10rem; left: -9rem; background: radial-gradient(circle, rgba(16, 185, 129, 0.22), transparent 68%); }
+    &__glow--2 { width: 24rem; height: 24rem; right: -8rem; bottom: -7rem; background: radial-gradient(circle, rgba(14, 116, 144, 0.2), transparent 68%); }
+    &__content { position: relative; z-index: 1; display: flex; flex-direction: column; width: 100%; padding: 2.5rem 3rem; }
+    &__logo { display: inline-flex; align-items: center; gap: 0.65rem; margin-bottom: auto; }
+    &__logo-icon { display: flex; }
+    &__logo-name { color: #eef4ff; font-size: 1.1rem; font-weight: 700; span { color: #31d6a8; } }
+    &__main { padding: 3rem 0; }
+    &__headline { max-width: 440px; margin-bottom: 1rem; color: #f8fafc; font-size: clamp(2rem, 3.2vw, 3rem); line-height: 1.08; letter-spacing: -0.055em; }
+    &__sub { max-width: 370px; margin-bottom: 2rem; color: #91a5c5; font-size: 0.92rem; line-height: 1.7; }
+    &__bullets { display: flex; flex-direction: column; gap: 0.85rem; list-style: none; li { display: flex; align-items: center; gap: 0.65rem; color: #c9d6e8; font-size: 0.85rem; font-weight: 500; svg { flex-shrink: 0; } } }
 }
 
-// ── Form side ──
 .auth-form-panel {
     display: flex;
     flex-direction: column;
-    background: #0d0f1a;
-
-    &__nav {
-        padding: 1.5rem 2rem;
-    }
-
-    &__inner {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        padding: 2rem 3rem 4rem;
-        max-width: 460px;
-        width: 100%;
-        margin: 0 auto;
-
-        @media (max-width: 480px) {
-            padding: 1.5rem 1.25rem 3rem;
-        }
-    }
-
-    &__header {
-        margin-bottom: 2rem;
-
-        h2 {
-            font-size: 1.65rem;
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            color: #f0f4ff;
-            margin-bottom: 0.35rem;
-        }
-
-        p {
-            font-size: 0.85rem;
-            color: #8a98b4;
-        }
-    }
+    background: #f8fafb;
+    &__nav { padding: 1.5rem 2rem; }
+    &__inner { display: flex; flex-direction: column; justify-content: center; flex: 1; width: min(440px, 100%); margin: 0 auto; padding: 2rem 2rem 4rem; }
+    &__header { margin-bottom: 2rem; h2 { margin-bottom: 0.4rem; color: #10182b; font-size: 1.8rem; letter-spacing: -0.045em; } p { color: #64748b; font-size: 0.86rem; } }
 }
 
-.auth-back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: #8a98b4;
-    text-decoration: none;
-    transition: color 0.18s;
-
-    &:hover { color: #ecf2ff; }
-}
-
-// ── Form elements ──
-.auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.1rem;
-}
-
+.auth-back-link { display: inline-flex; align-items: center; gap: 0.4rem; color: #64748b; font-size: 0.8rem; font-weight: 600; &:hover { color: #10182b; } }
+.auth-form { display: flex; flex-direction: column; gap: 1.1rem; }
 .auth-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    display: flex; flex-direction: column; gap: 0.5rem;
+    label { color: #334155; font-size: 0.8rem; font-weight: 700; }
+    input { padding: 0.82rem 1rem; border: 1px solid #d5dee6; border-radius: 0.7rem; outline: none; background: #fff; color: #10182b; font: inherit; font-size: 0.9rem; transition: border-color 0.18s, box-shadow 0.18s; &::placeholder { color: #9aa8b7; } &:focus { border-color: #08a77d; box-shadow: 0 0 0 3px rgba(8, 167, 125, 0.12); } } }
+.auth-layout .auth-submit { width: 100%; justify-content: center; margin-top: 0.5rem; padding: 0.88rem; background: #08a77d; color: #fff; box-shadow: 0 8px 18px rgba(8, 167, 125, 0.22); &:hover { box-shadow: 0 12px 24px rgba(8, 167, 125, 0.3); } }
+.auth-submit__spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+.auth-switch { margin-top: 1.25rem; color: #64748b; text-align: center; font-size: 0.82rem; a { color: #078b69; font-weight: 700; &:hover { color: #056d53; } } }
+.form-error { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.75rem 0.9rem; border: 1px solid #fecaca; border-radius: 0.55rem; background: #fff1f2; color: #be123c; font-size: 0.82rem; line-height: 1.5; svg { flex-shrink: 0; margin-top: 1px; } }
+.auth-loading { display: grid; place-items: center; min-height: 100vh; background: #f8fafb; &__spinner { width: 2.5rem; height: 2.5rem; border: 3px solid #c9efe4; border-top-color: #08a77d; border-radius: 50%; animation: spin 0.8s linear infinite; } }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-    label {
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #c5d0e8;
-        letter-spacing: 0.02em;
-    }
-
-    input {
-        padding: 0.75rem 1rem;
-        border-radius: 0.6rem;
-        border: 1px solid rgba(130, 150, 180, 0.2);
-        background: rgba(255, 255, 255, 0.04);
-        color: #ecf2ff;
-        font-family: inherit;
-        font-size: 0.9rem;
-        outline: none;
-        transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
-
-        &::placeholder {
-            color: rgba(138, 152, 180, 0.45);
-        }
-
-        &:focus {
-            border-color: rgba(107, 122, 255, 0.6);
-            background: rgba(107, 122, 255, 0.05);
-            box-shadow: 0 0 0 3px rgba(107, 122, 255, 0.12);
-        }
-
-        &:autofill,
-        &:-webkit-autofill {
-            -webkit-box-shadow: 0 0 0 50px #0d0f1a inset;
-            -webkit-text-fill-color: #ecf2ff;
-        }
-    }
+@media (max-width: 768px) {
+    .auth-layout { grid-template-columns: 1fr; }
+    .auth-form-panel__inner { padding: 2rem 1.25rem 3rem; }
 }
-
-.auth-submit {
-    width: 100%;
-    padding: 0.85rem;
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
-    justify-content: center;
-    gap: 0.5rem;
-
-    &__spinner {
-        width: 14px;
-        height: 14px;
-        border-radius: 50%;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        border-top-color: #fff;
-        animation: spin 0.7s linear infinite;
-        display: inline-block;
-    }
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-.auth-switch {
-    margin-top: 1.25rem;
-    text-align: center;
-    font-size: 0.82rem;
-    color: #8a98b4;
-
-    a {
-        color: #80E8FF;
-        font-weight: 600;
-        text-decoration: none;
-        transition: color 0.18s;
-
-        &:hover { color: #80E8FF; }
-    }
-}
-
-// ── Error state ──
-.form-error {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    padding: 0.75rem 0.9rem;
-    border-radius: 0.55rem;
-    background: rgba(239, 68, 68, 0.08);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    color: #f87171;
-    font-size: 0.82rem;
-    line-height: 1.5;
-
-    svg { flex-shrink: 0; margin-top: 1px; }
-}
-
-// ── Loading state ──
-.auth-loading {
-    min-height: 100vh;
-    display: grid;
-    place-items: center;
-    background: #0d0f1a;
-
-    &__spinner {
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 50%;
-        border: 3px solid rgba(107, 122, 255, 0.2);
-        border-top-color: #6B7AFF;
-        animation: spin 0.8s linear infinite;
-    }
-}
-
-
